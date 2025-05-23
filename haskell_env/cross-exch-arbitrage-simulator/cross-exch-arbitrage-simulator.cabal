@@ -1,0 +1,85 @@
+cabal-version:       2.2
+
+name:                cross-exch-arbitrage-simulator
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/githubuser/cross-exch-arbitrage-simulator#readme
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Author name here
+maintainer:          example@example.com
+copyright:           2025 Author name here
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+                     CHANGELOG.md
+
+executable cross-exch-arbitrage-simulator
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  other-modules:
+    Hello.HelloWorld
+    Data_parse.Snapshot
+    Data_parse.Data_parser,
+    Directory_scan.Get_snapshots,
+    QueueConsumer.Consumer,
+    Coordinator.Coordinator,
+    ProcessBatch.ProcessBatch
+  default-language:    Haskell2010
+  build-depends:       
+    base,
+    stm,
+    async,
+    parallel,
+    aeson,
+    zstd,
+    text,
+    bytestring,
+    typed-process,
+    conduit,
+    conduit-zstd,
+    conduit-extra,
+    process,
+    containers,
+    directory,
+    heap,
+    time,
+    text-time,
+    split
+  ghc-options:         
+    -Wall
+    -Wcompat
+    -Widentities
+    -Wincomplete-record-updates
+    -Wincomplete-uni-patterns
+    -Wmissing-export-lists
+    -Wmissing-home-modules
+    -Wpartial-fields
+    -Wredundant-constraints
+    -threaded 
+    -rtsopts
+
+test-suite test
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test src
+  main-is: Spec.hs
+  build-depends:
+      base
+    , aeson
+    , tasty
+    , tasty-hunit
+    , tasty-quickcheck
+    , containers
+    , text
+    , parallel
+    , bytestring
+    , time
+    , split
+    , async
+    , heap
+    , stm
+    , time
+    , text-time
+  default-language: Haskell2010
+  ghc-options: -Wall

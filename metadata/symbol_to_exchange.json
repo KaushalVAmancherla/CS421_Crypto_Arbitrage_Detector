@@ -1,0 +1,812 @@
+{
+  "ACA/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "ACH/USD": [
+    "Coinbase Pro",
+    "Gate.io",
+    "Huobi"
+  ],
+  "ADA/BRL": [
+    "Binance",
+    "MercadoBitcoin",
+    "NovaDAX"
+  ],
+  "ADA/EUR": [
+    "Binance",
+    "Kraken",
+    "Synthetic"
+  ],
+  "ADA/TRY": [
+    "Binance",
+    "Bitexen",
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "ADA/USD": [
+    "Binance",
+    "HitBTC",
+    "Huobi",
+    "Synthetic"
+  ],
+  "AE/USD": [
+    "DragonEX",
+    "Gate.io",
+    "Hotbit",
+    "Huobi"
+  ],
+  "APE/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi"
+  ],
+  "ASTR/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "BAT/ETH": [
+    "Bibox",
+    "Binance",
+    "Coinbase Pro"
+  ],
+  "BCH/EUR": [
+    "Binance",
+    "BitStamp",
+    "Coinbase Pro"
+  ],
+  "BCH/TRY": [
+    "Koinim",
+    "Paribu",
+    "Synthetic"
+  ],
+  "BTC/BRL": [
+    "Binance",
+    "MercadoBitcoin",
+    "NovaDAX"
+  ],
+  "BTC/EUR": [
+    "Binance",
+    "BitStamp",
+    "Coinbase Pro",
+    "Kraken"
+  ],
+  "BTC/KRW": [
+    "Bithumb",
+    "Coinone",
+    "Upbit"
+  ],
+  "BTC/USD": [
+    "Binance",
+    "Bitfinex",
+    "Coinbase Pro",
+    "FTX"
+  ],
+  "BTM/BTC": [
+    "Bibox",
+    "Gate.io",
+    "Huobi",
+    "OKEx"
+  ],
+  "BTM/USD": [
+    "Bibox",
+    "Huobi",
+    "OKEx"
+  ],
+  "BTS/USD": [
+    "Binance",
+    "Gate.io",
+    "Huobi",
+    "Synthetic"
+  ],
+  "BTT/USD": [
+    "Binance",
+    "KuCoin",
+    "Poloniex"
+  ],
+  "CHZ/USD": [
+    "Binance",
+    "BitMax",
+    "XT.COM"
+  ],
+  "COMP/BTC": [
+    "Binance",
+    "Coinbase Pro",
+    "OKEx"
+  ],
+  "COMP/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "OKEx"
+  ],
+  "COVAL/USD": [
+    "Coinbase Pro",
+    "Gate.io",
+    "Synthetic"
+  ],
+  "CRO/BTC": [
+    "Bittrex",
+    "HitBTC",
+    "Huobi"
+  ],
+  "CVC/ETH": [
+    "Binance",
+    "Bittrex",
+    "Gate.io",
+    "Huobi"
+  ],
+  "CVX/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "DAI/USD": [
+    "Coinbase Pro",
+    "Ethfinex",
+    "Gate.io"
+  ],
+  "DASH/BTC": [
+    "Binance",
+    "HitBTC",
+    "OKEx"
+  ],
+  "DASH/TRY": [
+    "Bitci.com",
+    "BTCTurk",
+    "Koinim",
+    "Synthetic"
+  ],
+  "DASH/USD": [
+    "Binance",
+    "Huobi",
+    "OKEx",
+    "ZB.COM"
+  ],
+  "DCR/USD": [
+    "Binance",
+    "MXC",
+    "OKEx",
+    "Synthetic"
+  ],
+  "DGB/BTC": [
+    "Bittrex",
+    "HitBTC",
+    "OKEx"
+  ],
+  "DGB/ETH": [
+    "Bittrex",
+    "HitBTC",
+    "Kucoin"
+  ],
+  "DOGE/ETH": [
+    "Bittrex",
+    "HitBTC",
+    "Huobi"
+  ],
+  "DOGE/EUR": [
+    "Binance",
+    "Coinbase Pro",
+    "Kraken"
+  ],
+  "DOGE/TRY": [
+    "Binance",
+    "Bitexen",
+    "Paribu"
+  ],
+  "DOGE/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi",
+    "ZB.COM"
+  ],
+  "EGT/USD": [
+    "Huobi",
+    "OKEx",
+    "Synthetic"
+  ],
+  "EOS/BTC": [
+    "Bibox",
+    "Coinbene",
+    "Huobi"
+  ],
+  "EOS/ETH": [
+    "Bibox",
+    "Binance",
+    "BitMart"
+  ],
+  "EOS/TRY": [
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "EOS/USD": [
+    "Binance",
+    "Coinbene",
+    "Huobi"
+  ],
+  "ETC/BTC": [
+    "Bibox",
+    "Binance",
+    "Huobi"
+  ],
+  "ETC/USD": [
+    "Binance",
+    "Coinbene",
+    "Gate.io"
+  ],
+  "ETH/BTC": [
+    "Binance",
+    "Coinbene",
+    "Huobi",
+    "Poloniex",
+    "TOKOK"
+  ],
+  "ETH/EUR": [
+    "Binance",
+    "BitStamp",
+    "Coinbase Pro",
+    "Kraken"
+  ],
+  "ETH/GBP": [
+    "Binance",
+    "Bitfinex",
+    "Coinbase Pro"
+  ],
+  "ETH/JPY": [
+    "Bitfinex",
+    "QUOINE",
+    "Zaif"
+  ],
+  "ETH/KRW": [
+    "Bithumb",
+    "Coinone",
+    "Upbit"
+  ],
+  "ETH/TRY": [
+    "Bitexen",
+    "BTCTurk",
+    "Paribu"
+  ],
+  "ETH/USD": [
+    "Binance",
+    "Bitfinex",
+    "Huobi",
+    "IDCM"
+  ],
+  "EVX/BTC": [
+    "Binance",
+    "Huobi",
+    "Mercatox"
+  ],
+  "FITFI/USD": [
+    "Gate.io",
+    "Huobi",
+    "Kucoin"
+  ],
+  "FLOW/USD": [
+    "Binance",
+    "Gate.io",
+    "Huobi",
+    "Kraken"
+  ],
+  "FLUX/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "FTT/BTC": [
+    "Binance",
+    "FTX",
+    "Huobi"
+  ],
+  "FTT/USD": [
+    "Binance",
+    "FTX",
+    "Huobi"
+  ],
+  "GAL/USD": [
+    "Binance",
+    "Gate.io",
+    "Huobi"
+  ],
+  "GALA/USD": [
+    "Binance",
+    "Gate.io",
+    "Kucoin"
+  ],
+  "GLMR/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "GNO/BTC": [
+    "Binance",
+    "Bittrex",
+    "Huobi",
+    "Kraken"
+  ],
+  "GNO/USD": [
+    "Binance",
+    "Huobi",
+    "Kraken"
+  ],
+  "GRT/EUR": [
+    "Binance",
+    "Coinbase Pro",
+    "Kraken"
+  ],
+  "GRT/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi"
+  ],
+  "GST/USD": [
+    "Coinbase Pro",
+    "Gate.io",
+    "Huobi",
+    "Kucoin"
+  ],
+  "GTO/USD": [
+    "Binance",
+    "OKEx",
+    "Synthetic"
+  ],
+  "HCA/BTC": [
+    "Gate.io",
+    "Huobi",
+    "OKEx"
+  ],
+  "HCA/USD": [
+    "Huobi",
+    "OKEx",
+    "Synthetic",
+    "ZB.COM"
+  ],
+  "HOT/TRY": [
+    "Binance",
+    "Bitexen",
+    "Paribu"
+  ],
+  "HOT/USD": [
+    "BigONE",
+    "Binance",
+    "Bitrue"
+  ],
+  "ICP/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi"
+  ],
+  "ICX/BTC": [
+    "Binance",
+    "HitBTC",
+    "OKEx"
+  ],
+  "ICX/ETH": [
+    "Binance",
+    "HitBTC",
+    "Huobi"
+  ],
+  "ICX/USD": [
+    "Binance",
+    "DragonEX",
+    "OKEx"
+  ],
+  "IOST/BTC": [
+    "BigONE",
+    "Binance",
+    "OKEx"
+  ],
+  "IOST/USD": [
+    "Binance",
+    "Huobi",
+    "OKEx"
+  ],
+  "IOTX/USD": [
+    "Binance",
+    "Gate.io",
+    "Synthetic"
+  ],
+  "JASMY/USD": [
+    "Bittrex",
+    "Coinbase Pro",
+    "Gate.io"
+  ],
+  "KAVA/USD": [
+    "Binance",
+    "Kraken",
+    "Kucoin"
+  ],
+  "KNC/USD": [
+    "Binance",
+    "Gate.io",
+    "OKEx"
+  ],
+  "LINK/EUR": [
+    "Binance",
+    "Coinbase Pro",
+    "Kraken"
+  ],
+  "LRC/USD": [
+    "Binance",
+    "Gate.io",
+    "OKEx"
+  ],
+  "LTC/BRL": [
+    "Binance",
+    "MercadoBitcoin",
+    "NovaDAX"
+  ],
+  "LTC/ETH": [
+    "Bibox",
+    "Binance",
+    "p2pb2b"
+  ],
+  "LTC/TRY": [
+    "Bitexen",
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "LUNC/USD": [
+    "Gate.io",
+    "Huobi",
+    "Kucoin"
+  ],
+  "MANA/ETH": [
+    "Binance",
+    "Huobi",
+    "OKEx"
+  ],
+  "MANA/USD": [
+    "Binance",
+    "Gate.io",
+    "OKEx"
+  ],
+  "MASK/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Gate.io"
+  ],
+  "NEO/BTC": [
+    "Bibox",
+    "Binance",
+    "OKEx"
+  ],
+  "NEO/ETH": [
+    "Bibox",
+    "Binance",
+    "BitMart"
+  ],
+  "NEO/EUR": [
+    "Bitfinex",
+    "Bitpanda Pro",
+    "Synthetic"
+  ],
+  "NEO/TRY": [
+    "Binance",
+    "Bitexen",
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "NEXO/BTC": [
+    "HitBTC",
+    "Hotbit",
+    "Huobi",
+    "Mercatox"
+  ],
+  "OCN/USD": [
+    "Gate.io",
+    "Huobi",
+    "Synthetic"
+  ],
+  "OMG/USD": [
+    "Binance",
+    "Huobi",
+    "ZB.COM"
+  ],
+  "ONT/USD": [
+    "Huobi",
+    "OKEx",
+    "Synthetic"
+  ],
+  "PAX/USD": [
+    "Binance",
+    "BitMart",
+    "Coinbase Pro"
+  ],
+  "PEOPLE/USD": [
+    "Binance",
+    "Gate.io",
+    "Huobi"
+  ],
+  "POND/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "PYR/USD": [
+    "Binance",
+    "Gate.io",
+    "KuCoin"
+  ],
+  "QASH/BTC": [
+    "Hotbit",
+    "Huobi",
+    "QUOINE"
+  ],
+  "QNT/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Synthetic"
+  ],
+  "QTUM/ETH": [
+    "Binance",
+    "BitMart",
+    "Gate.io"
+  ],
+  "QTUM/USD": [
+    "Binance",
+    "OKEx",
+    "ZB.COM"
+  ],
+  "REP/ETH": [
+    "Binance",
+    "Gate.io",
+    "HitBTC"
+  ],
+  "RLY/USD": [
+    "Coinbase Pro",
+    "Gate.io",
+    "Huobi"
+  ],
+  "RVN/BTC": [
+    "Binance",
+    "BitForex",
+    "Upbit"
+  ],
+  "SBTC/BTC": [
+    "Gate.io",
+    "Huobi",
+    "OKEx"
+  ],
+  "SC/BTC": [
+    "Binance",
+    "HitBTC",
+    "Poloniex"
+  ],
+  "SC/USD": [
+    "Binance",
+    "Kraken",
+    "Synthetic",
+    "Upbit"
+  ],
+  "SKM/USD": [
+    "Gate.io",
+    "Huobi",
+    "Synthetic"
+  ],
+  "SKY/BTC": [
+    "Binance",
+    "FinexBox",
+    "Hotbit"
+  ],
+  "SMART/USD": [
+    "Exmo",
+    "HitBTC",
+    "Synthetic"
+  ],
+  "SNX/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi"
+  ],
+  "SOL/GBP": [
+    "Binance",
+    "Coinbase Pro",
+    "Kraken"
+  ],
+  "SOL/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "FTX"
+  ],
+  "STRAT/BTC": [
+    "Binance",
+    "Bittrex",
+    "HitBTC"
+  ],
+  "STRAT/ETH": [
+    "Binance",
+    "Bittrex",
+    "HitBTC"
+  ],
+  "THETA/ETH": [
+    "Binance",
+    "Hotbit",
+    "Huobi"
+  ],
+  "THETA/USD": [
+    "Binance",
+    "Kucoin",
+    "OKEx"
+  ],
+  "TOMO/USD": [
+    "Binance",
+    "Gate.io",
+    "Synthetic"
+  ],
+  "TRX/TRY": [
+    "Binance",
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "TRX/USD": [
+    "Binance",
+    "Bitrue",
+    "Huobi"
+  ],
+  "TUSD/USD": [
+    "Binance",
+    "BitMart",
+    "Coinsbit"
+  ],
+  "USDD/USD": [
+    "Gate.io",
+    "Huobi",
+    "Poloniex"
+  ],
+  "USDT/TRY": [
+    "Binance",
+    "BTCTurk",
+    "Paribu"
+  ],
+  "USTC/USD": [
+    "Huobi",
+    "Kraken",
+    "Kucoin"
+  ],
+  "UTK/USD": [
+    "Binance",
+    "OKEx",
+    "Synthetic"
+  ],
+  "VET/BTC": [
+    "Binance",
+    "BitMart",
+    "HitBTC"
+  ],
+  "VET/KRW": [
+    "Bithumb",
+    "Synthetic",
+    "Upbit"
+  ],
+  "VSYS/BTC": [
+    "BitForex",
+    "Huobi",
+    "Kucoin"
+  ],
+  "WAN/BTC": [
+    "Binance",
+    "Bitrue",
+    "Huobi"
+  ],
+  "WAX/USD": [
+    "Ethfinex",
+    "HitBTC",
+    "Synthetic"
+  ],
+  "WBTC/BTC": [
+    "Binance",
+    "Coinbase Pro",
+    "FTX",
+    "Huobi"
+  ],
+  "WOO/USD": [
+    "Gate.io",
+    "Huobi",
+    "KuCoin"
+  ],
+  "WTC/BTC": [
+    "Binance",
+    "Bitrue",
+    "OKEx"
+  ],
+  "XDC/USD": [
+    "Gate.io",
+    "Kucoin",
+    "Synthetic"
+  ],
+  "XEM/BTC": [
+    "Binance",
+    "DragonEX",
+    "HitBTC",
+    "OKEx"
+  ],
+  "XEM/ETH": [
+    "Binance",
+    "Gate.io",
+    "HitBTC",
+    "OKEx"
+  ],
+  "XEM/KRW": [
+    "Bithumb",
+    "Synthetic",
+    "Upbit"
+  ],
+  "XLM/ETH": [
+    "Binance",
+    "BitMart",
+    "HitBTC"
+  ],
+  "XLM/TRY": [
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "XLM/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi",
+    "OKEx",
+    "ZB.COM"
+  ],
+  "XMR/BTC": [
+    "Binance",
+    "HitBTC",
+    "OKEx"
+  ],
+  "XMR/ETH": [
+    "Binance",
+    "HitBTC",
+    "OKEx"
+  ],
+  "XRP/KRW": [
+    "Bithumb",
+    "Coinone",
+    "Upbit"
+  ],
+  "XRP/TRY": [
+    "Binance",
+    "BTCTurk",
+    "Paribu",
+    "Synthetic"
+  ],
+  "XRP/USD": [
+    "Binance",
+    "Bitrue",
+    "Huobi",
+    "OKEx"
+  ],
+  "XTZ/BTC": [
+    "BitMax",
+    "HitBTC",
+    "Huobi"
+  ],
+  "ZEC/USD": [
+    "Binance",
+    "Huobi",
+    "LBank",
+    "OKEx"
+  ],
+  "ZRX/BTC": [
+    "Binance",
+    "HitBTC",
+    "OKEx"
+  ],
+  "ZRX/USD": [
+    "Binance",
+    "Coinbase Pro",
+    "Huobi"
+  ],
+  "pDOTn/TRY": [
+    "Bitexen",
+    "BTCTurk",
+    "Paribu"
+  ]
+}

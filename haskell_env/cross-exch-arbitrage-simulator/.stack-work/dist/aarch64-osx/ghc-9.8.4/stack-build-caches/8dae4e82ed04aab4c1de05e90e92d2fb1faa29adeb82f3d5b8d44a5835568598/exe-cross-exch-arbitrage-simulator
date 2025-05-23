@@ -1,0 +1,20 @@
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/CHANGELOG.md:
+  hash: eca3774a81b4c163c1634df6aa1d29fca34d7efb89dd50bb483201a19ab92dc0
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/README.md:
+  hash: eb8754e630c9247f93d2a144aa7e7666de0db1fa19fa782206a90fcc870fc427
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/cross-exch-arbitrage-simulator.cabal:
+  hash: 968e89264a1f391003737c11fd846420f56ee84fd1c15a56393fc06428d0e918
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/Coordinator/Coordinator.hs:
+  hash: f308b973bda15c29a2843283a0b99612880824c757b601328299a5dc639a1e88
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/Data_parse/Data_parser.hs:
+  hash: d24c1b2f4687cc3072a2a46d797f61e9a5914cf1a63648d32ebb5b4da1bbda3a
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/Data_parse/Snapshot.hs:
+  hash: d89e217de4084a9694ef236e9ae340d50c0bb8ec084a7fb810e65df621287561
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/Directory_scan/Get_snapshots.hs:
+  hash: aa6afadbd82d612f482b10fc8da8d95bbf2c4167998f433e0df21b8baec05dcc
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/Hello/HelloWorld.hs:
+  hash: 248237a3850cdc0dc22d90d45eb681ab713cd37670ba10b7878f480359b32052
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/Main.hs:
+  hash: 3089c4ba5a4e49df2695e9ec7fb3a53b6fec716719ab9c1265bbc76315c9ac4a
+/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/src/QueueConsumer/Consumer.hs:
+  hash: 422998d57a4d951c0f8b0d402f005c2834e4c411e5ab02d246eaaea6464b4268
