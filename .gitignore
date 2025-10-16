@@ -1,2 +1,130 @@
+# =========================
+# OS / editors / tooling
+# =========================
+.DS_Store
+Thumbs.db
+__MACOSX/
+*.swp
+*.swo
+*.orig
+*.log
+*.tmp
+*.cache
+
+# VS Code / JetBrains
+.vscode/
+.idea/
+.history/
+
+# =========================
+# Git / packaging
+# =========================
+# (prevents accidentally re-zipping a repo-within-repo)
+.git/
+*.zip
+*.tar
+*.tar.gz
+
+# =========================
+# Secrets & credentials
+# =========================
 .env
-decompress_zst.py
+*.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*secret*.json
+*secrets*.json
+*apikey*.json
+*api_key*.json
+*credentials*.json
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.venv/
+.venv*/
+venv/
+venv*/
+.ipynb_checkpoints/
+.python-version
+
+# Local virtualenv (present in the zip)
+.crypto-arbitrage-project/
+
+# =========================
+# Haskell (Stack/Cabal)
+# =========================
+.stack-work/
+dist/
+dist-*/
+dist-newstyle/
+cabal.project.local
+cabal.project.local~
+.ghc.environment.*
+.stack-work/**
+
+# (Keep stack/cabal lockfiles committed)
+# stack.yaml.lock
+
+# =========================
+# Project data (large/generated)
+# =========================
+# Keep code + small docs, ignore generated data & outputs.
+datasets/**
+!datasets/README.md
+!datasets/*.md
+!datasets/samples/**
+!datasets/.gitkeep
+
+metadata/**
+!metadata/README.md
+!metadata/*.md
+!metadata/samples/**
+!metadata/.gitkeep
+
+outputs/**
+!outputs/README.md
+!outputs/*.md
+!outputs/.gitkeep
+
+# Common heavy file types for data snapshots
+*.ndjson
+*.ndjson.zst
+*.zst
+*.parquet
+*.feather
+*.csv.gz
+*.xz
+*.lz4
+*.bz2
+*.sqlite
+*.sqlite3
+
+# =========================
+# Project-specific extras
+# =========================
+# Haskell binary outputs that sometimes slip into repos
+*.hi
+*.o
+
+# Stack setup/binary caches (seen in the archive)
+.stack-setup-config-mod
+stack-setup-config-mod
+stack.sqlite3*
+
+# Mac code-signing detritus that can appear
+*.dSYM/
