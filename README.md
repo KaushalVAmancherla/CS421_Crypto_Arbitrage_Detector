@@ -134,7 +134,7 @@ stack run cross-exch-arbitrage-simulator -- --day 2025-10-13 +RTS -N -s
     ...
 ```
 
-Output logbook file-path: `outputs/arbitrage.log`
+Results are saved at `outputs/arbitrage.log`
 
 ---
 
