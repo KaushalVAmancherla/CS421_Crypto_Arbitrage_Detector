@@ -100,6 +100,16 @@
   (major1) == 1 && (major2) <  3 || \
   (major1) == 1 && (major2) == 3 && (minor) <= 8)
 #endif /* MIN_VERSION_directory */
+/* package filepath-1.4.301.0 */
+#ifndef VERSION_filepath
+#define VERSION_filepath "1.4.301.0"
+#endif /* VERSION_filepath */
+#ifndef MIN_VERSION_filepath
+#define MIN_VERSION_filepath(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  4 || \
+  (major1) == 1 && (major2) == 4 && (minor) <= 301)
+#endif /* MIN_VERSION_filepath */
 /* package heap-1.0.4 */
 #ifndef VERSION_heap
 #define VERSION_heap "1.0.4"
@@ -201,15 +211,15 @@
   (major1) == 0 && (major2) == 1 && (minor) <= 3)
 #endif /* MIN_VERSION_zstd */
 
-/* tool gcc-15.0.0 */
+/* tool gcc-17.0.0 */
 #ifndef TOOL_VERSION_gcc
-#define TOOL_VERSION_gcc "15.0.0"
+#define TOOL_VERSION_gcc "17.0.0"
 #endif /* TOOL_VERSION_gcc */
 #ifndef MIN_TOOL_VERSION_gcc
 #define MIN_TOOL_VERSION_gcc(major1,major2,minor) (\
-  (major1) <  15 || \
-  (major1) == 15 && (major2) <  0 || \
-  (major1) == 15 && (major2) == 0 && (minor) <= 0)
+  (major1) <  17 || \
+  (major1) == 17 && (major2) <  0 || \
+  (major1) == 17 && (major2) == 0 && (minor) <= 0)
 #endif /* MIN_TOOL_VERSION_gcc */
 /* tool ghc-9.8.4 */
 #ifndef TOOL_VERSION_ghc
@@ -241,16 +251,6 @@
   (major1) == 2 && (major2) <  30 || \
   (major1) == 2 && (major2) == 30 && (minor) <= 0)
 #endif /* MIN_TOOL_VERSION_haddock */
-/* tool happy-1.20.1.1 */
-#ifndef TOOL_VERSION_happy
-#define TOOL_VERSION_happy "1.20.1.1"
-#endif /* TOOL_VERSION_happy */
-#ifndef MIN_TOOL_VERSION_happy
-#define MIN_TOOL_VERSION_happy(major1,major2,minor) (\
-  (major1) <  1 || \
-  (major1) == 1 && (major2) <  20 || \
-  (major1) == 1 && (major2) == 20 && (minor) <= 1)
-#endif /* MIN_TOOL_VERSION_happy */
 /* tool hpc-0.69 */
 #ifndef TOOL_VERSION_hpc
 #define TOOL_VERSION_hpc "0.69"
@@ -271,16 +271,6 @@
   (major1) == 0 && (major2) <  68 || \
   (major1) == 0 && (major2) == 68 && (minor) <= 10)
 #endif /* MIN_TOOL_VERSION_hsc2hs */
-/* tool pkg-config-2.3.0 */
-#ifndef TOOL_VERSION_pkg_config
-#define TOOL_VERSION_pkg_config "2.3.0"
-#endif /* TOOL_VERSION_pkg_config */
-#ifndef MIN_TOOL_VERSION_pkg_config
-#define MIN_TOOL_VERSION_pkg_config(major1,major2,minor) (\
-  (major1) <  2 || \
-  (major1) == 2 && (major2) <  3 || \
-  (major1) == 2 && (major2) == 3 && (minor) <= 0)
-#endif /* MIN_TOOL_VERSION_pkg_config */
 /* tool runghc-9.8.4 */
 #ifndef TOOL_VERSION_runghc
 #define TOOL_VERSION_runghc "9.8.4"
@@ -293,7 +283,7 @@
 #endif /* MIN_TOOL_VERSION_runghc */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "cross-exch-arbitrage-simulator-0.1.0.0-DnL0YRzmE9R14gmEGDCHHa-cross-exch-arbitrage-simulator"
+#define CURRENT_COMPONENT_ID "cross-exch-arbitrage-simulator-0.1.0.0-D8PrU3x1InfFLZPq1fuGa7-cross-exch-arbitrage-simulator"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

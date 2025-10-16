@@ -46,7 +46,8 @@ executable cross-exch-arbitrage-simulator
     heap,
     time,
     text-time,
-    split
+    split,
+    filepath
   ghc-options:         
     -Wall
     -Wcompat
