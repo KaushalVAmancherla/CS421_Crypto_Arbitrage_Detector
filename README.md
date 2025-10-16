@@ -43,19 +43,14 @@ outputs/                   # (ignored) logbook of per-min arbitrage opportunitie
 ## Prerequisites
 
 - **Python 3.10+**  
-  Use a virtual environment (recommended) and install from `ds_scripts/requirements.txt`.
+  Install from `ds_scripts/requirements.txt`, (use of virtual environment is recommended)
 - **TwelveData API key** (free tier OK; 8 req/min, 800/day)
-- **Stack** (Haskell build tool): <https://docs.haskellstack.org/>
+- **Stack** (Haskell build tool): <a href="https://docs.haskellstack.org/" target="_blank" rel="noopener noreferrer">docs.haskellstack.org</a>
+
 
 ## Environment variables
 
-Create a `.env` at the repo root (not committed). You may start by copying `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
-Then edit `.env` to include your key:
+Create a `.env` at the repo root (not committed) to include your key:
 
 ```dotenv
 TWELVEDATA_API_KEY=<your_key_here>
@@ -85,6 +80,10 @@ python -m pip install -r ds_scripts/requirements.txt
 
 # Build the dataset for a day (YYYY-MM-DD)
 python ds_scripts/create_dataset.py --day 2025-10-13
+
+'''
+Note, ds_scripts/create_dataset.py takes min-exchanges and compression_level as optional arguments. Please refer to the Dataset Builder section of TECHNICAL_OVERVIEW.md for a more detailed explanation of these parameters.
+'''
 ```
 
 **What this does**
@@ -95,9 +94,12 @@ python ds_scripts/create_dataset.py --day 2025-10-13
   `datasets/crypto_snapshot_data/<DAY>/<EXCH>.ndjson.zst`
 
 **Rate-limit notes**
-- Free tier is **8 calls/min** and **800/day**. The script batches requests and sleeps as needed; concurrency is still bottlenecked by the ceiling but overlaps I/O to hide latency.
+- Free tier is **8 calls/min** and **800/day**. The script is designed for this plan, so
+data fetching may be slow.
 
 ## 2) Build & run the Haskell simulator
+
+Build the project
 
 ```bash
 cd haskell_env/cross-exch-arbitrage-simulator
@@ -107,12 +109,11 @@ stack build
 Run the simulator for a specific day (reads the exchange snapshots produced in step 1):
 
 ```bash
-# Use all cores; pass -N to enable multicore RTS
 stack run cross-exch-arbitrage-simulator -- --day 2025-10-13 +RTS -N -s
 ```
 
 - `--day` selects the dataset day.  
-- `+RTS -N` lets the runtime use all capabilities (cores). You can also pass `+RTS -N4` to pin to 4 cores.  
+- `+RTS -N` lets the runtime use all capabilities (cores). You could also pass `+RTS -N4` to pin to 4 cores, for example.
 - `-s` prints RTS stats at exit (useful for benchmarking).
 
 ### Example output (truncated)
@@ -131,6 +132,8 @@ stack run cross-exch-arbitrage-simulator -- --day 2025-10-13 +RTS -N -s
     ...
 ```
 
+Output logbook file-path: `outputs/arbitrage.log`
+
 ---
 
 ## Unit tests
@@ -142,8 +145,7 @@ cd haskell_env/cross-exch-arbitrage-simulator
 stack test
 ```
 
-- This compiles the test target(s) and runs them under Stack’s test runner.
-- You can pass RTS options during tests as well, e.g. `stack test --test-arguments="+RTS -N -s"`.
+- This compiles the test targets and runs them under Stack’s test runner.
 
 ---
 
@@ -158,12 +160,6 @@ For a deeper dive into data formats, concurrency/parallelism, and STM design dec
 
 - **Simulator can’t find data**  
   Ensure `datasets/crypto_snapshot_data/<DAY>/` exists (run Step 1 again) and your `--day` matches the created day.
-
-- **Rate-limited / partial data**  
-  TwelveData free tier will throttle; re-run the dataset step if some symbols/exchanges arrived late. The simulator tolerates missing pairs per minute.
-
-- **Use fewer cores**  
-  Append `+RTS -N4` (or another number) to restrict runtime parallelism.
 
 ---
 
