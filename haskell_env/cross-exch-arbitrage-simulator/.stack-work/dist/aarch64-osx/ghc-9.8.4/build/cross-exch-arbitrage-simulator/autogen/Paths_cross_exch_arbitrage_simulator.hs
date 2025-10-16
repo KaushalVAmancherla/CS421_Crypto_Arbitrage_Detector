@@ -46,12 +46,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/face4211ee83b8bf0dc7b07991170827810f6788695618f2566f771dd2dbaae6/9.8.4/bin"
-libdir     = "/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/face4211ee83b8bf0dc7b07991170827810f6788695618f2566f771dd2dbaae6/9.8.4/lib/aarch64-osx-ghc-9.8.4/cross-exch-arbitrage-simulator-0.1.0.0-DnL0YRzmE9R14gmEGDCHHa-cross-exch-arbitrage-simulator"
-dynlibdir  = "/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/face4211ee83b8bf0dc7b07991170827810f6788695618f2566f771dd2dbaae6/9.8.4/lib/aarch64-osx-ghc-9.8.4"
-datadir    = "/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/face4211ee83b8bf0dc7b07991170827810f6788695618f2566f771dd2dbaae6/9.8.4/share/aarch64-osx-ghc-9.8.4/cross-exch-arbitrage-simulator-0.1.0.0"
-libexecdir = "/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/face4211ee83b8bf0dc7b07991170827810f6788695618f2566f771dd2dbaae6/9.8.4/libexec/aarch64-osx-ghc-9.8.4/cross-exch-arbitrage-simulator-0.1.0.0"
-sysconfdir = "/Users/kaushalamancherla/cs421-honors-project/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/face4211ee83b8bf0dc7b07991170827810f6788695618f2566f771dd2dbaae6/9.8.4/etc"
+bindir     = "/Users/kaushalamancherla/CS421_Crypto_Arbitrage_Detector/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/f342eafb070af29c79efc4f8bf66c01f2b091d6ce75bb009665ed0341e2f3796/9.8.4/bin"
+libdir     = "/Users/kaushalamancherla/CS421_Crypto_Arbitrage_Detector/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/f342eafb070af29c79efc4f8bf66c01f2b091d6ce75bb009665ed0341e2f3796/9.8.4/lib/aarch64-osx-ghc-9.8.4/cross-exch-arbitrage-simulator-0.1.0.0-D8PrU3x1InfFLZPq1fuGa7-cross-exch-arbitrage-simulator"
+dynlibdir  = "/Users/kaushalamancherla/CS421_Crypto_Arbitrage_Detector/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/f342eafb070af29c79efc4f8bf66c01f2b091d6ce75bb009665ed0341e2f3796/9.8.4/lib/aarch64-osx-ghc-9.8.4"
+datadir    = "/Users/kaushalamancherla/CS421_Crypto_Arbitrage_Detector/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/f342eafb070af29c79efc4f8bf66c01f2b091d6ce75bb009665ed0341e2f3796/9.8.4/share/aarch64-osx-ghc-9.8.4/cross-exch-arbitrage-simulator-0.1.0.0"
+libexecdir = "/Users/kaushalamancherla/CS421_Crypto_Arbitrage_Detector/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/f342eafb070af29c79efc4f8bf66c01f2b091d6ce75bb009665ed0341e2f3796/9.8.4/libexec/aarch64-osx-ghc-9.8.4/cross-exch-arbitrage-simulator-0.1.0.0"
+sysconfdir = "/Users/kaushalamancherla/CS421_Crypto_Arbitrage_Detector/haskell_env/cross-exch-arbitrage-simulator/.stack-work/install/aarch64-osx/f342eafb070af29c79efc4f8bf66c01f2b091d6ce75bb009665ed0341e2f3796/9.8.4/etc"
 
 getBinDir     = catchIO (getEnv "cross_exch_arbitrage_simulator_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "cross_exch_arbitrage_simulator_libdir")     (\_ -> return libdir)

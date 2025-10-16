@@ -60,11 +60,11 @@ process fp ts batch = do
     let 
         bestMap = parallelBestMap numCores batch --parallel processing to find the "bestMap" (i.e. map of coin to lowest/highest price data)
         validatedMap = validateMap bestMap --validate bestMap to ensure we keep only valid arbitrages
-        timestmap = (T.pack (show ts))
+        timestamp = (T.pack (show ts))
 
     -- write arbitrage opportunities to log file
     withFile fp AppendMode $ \h -> do
-      TIO.hPutStrLn h timestmap
+      TIO.hPutStrLn h timestamp
 
       case validatedMap of
         [] -> TIO.hPutStrLn h "  no arbitrage opportunities in this batch."
@@ -76,54 +76,29 @@ process fp ts batch = do
                     <> "  sell $" <> T.pack (show pSell) <> " on " <> exSell
             TIO.hPutStrLn h line
 
-loop :: UTCTime -> Coordinator -> Double -> FilePath -> IO ()
-loop nextStart coord producerDelay out = do
-  res <- atomically (popNextBatch coord) -- pop batch from heap
-  case res of
-    Nothing -> pure ()
-    Just (ts, batch) -> do
-      let scheduledEnd = addUTCTime (realToFrac producerDelay) nextStart -- when the current batch is supposed to end
-      
-      putStrLn $ "BATCH: " <> show ts
-
-      process out ts batch
-      end <- getCurrentTime
-
-      let slack = diffUTCTime scheduledEnd end
-
-      when (slack > 0) $ do
-          -- threadDelay (floor (slack * 1e6))
-          putStrLn $ "[END EARLY] | TARGET END: " <> show scheduledEnd <> " ACTUAL END: " <> show end <> " REM : " <> show slack
-
-      when (slack < 0) $ do -- you ended processing for this batch when you should have already been processing the next batch
-          putStrLn $ "[END WARN] | TARGET END: " <> show scheduledEnd <> " ACTUAL END: " <> show end <> " DELAY: " <> show (negate slack)
-
-      putStrLn $ ""
-
-      loop scheduledEnd coord producerDelay out -- recursively loop through processing batches in heap until no more remain
-
 consumer :: Coordinator -> Double -> FilePath -> IO ()
-consumer coord producerDelay out = do
-  first <- atomically (popNextBatch coord)
-  case first of
-    Nothing -> pure ()
-    Just (ts, batch) -> do
-      now <- getCurrentTime -- wall clock
-      let scheduledEnd  = addUTCTime (realToFrac producerDelay) now --when Batch 1 should start
+consumer coord delaySec out = go
+  where
+    go = do
+      mBatch <- atomically (popNextBatch coord)  -- blocks; no polling
+      case mBatch of
+        Nothing -> pure ()
+        Just (ts, batch) -> do
+          arrival <- getCurrentTime                 -- when batch became available
+          putStrLn $ "BATCH: " <> show ts <> " ARRIVAL TIME: " <> show arrival
 
-      putStrLn $ "BATCH: " <> show ts
-      process out ts batch
+          process out ts batch                      -- your per-minute work
 
-      end <- getCurrentTime
-      let slack = diffUTCTime scheduledEnd end
+          end <- getCurrentTime
 
-      when (slack > 0) $ do
-          -- threadDelay (floor (slack * 1e6))
-          putStrLn $ "[END EARLY] | TARGET END: " <> show scheduledEnd <> " ACTUAL END: " <> show end <> " REM : " <> show slack
-
-      when (slack < 0) $ do -- you ended processing for this batch when you should have already been processing the next batch
-          putStrLn $ "[END WARN] | TARGET END: " <> show scheduledEnd <> " ACTUAL END: " <> show end <> " DELAY: " <> show (negate slack)
-
-      putStrLn $ ""
-
-      loop scheduledEnd coord producerDelay out
+          let target = addUTCTime (realToFrac delaySec) arrival
+              slack  = diffUTCTime target end
+              work_time = diffUTCTime end arrival
+        
+          if slack > 0
+            then putStrLn $ "[END EARLY] target=" <> show target <> " actual=" <> show end <> " rem="   <> show slack <> " work_time=" <> show work_time
+            else if slack < 0
+                then putStrLn $ "[END WARN ] target=" <> show target <> " actual=" <> show end <> " delay=" <> show (negate slack) <> " work_time=" <> show work_time
+                else putStrLn $ "[ON TIME ] target=" <> show target <> " actual=" <> show end <> " rem="   <> show slack <> " work_time=" <> show work_time
+          
+          go

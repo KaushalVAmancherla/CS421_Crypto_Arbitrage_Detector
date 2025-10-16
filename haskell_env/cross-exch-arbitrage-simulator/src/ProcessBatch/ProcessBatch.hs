@@ -25,8 +25,8 @@ through merging of each atomic chunk's best map
 -- This can be thought of as an init step, the merge will later take care of these duplicate/placeholder values
 getSnapshotBestMap :: (Text,Snapshot) -> Map Text ((Double,Text),(Double,Text))
 getSnapshotBestMap (exch, snap) = 
-    let ochl_map = ochl snap
-    in Map.map (\t -> ((close t,exch),(close t,exch))) ochl_map
+    let ohcl_map = ohcl snap
+    in Map.map (\t -> ((close t,exch),(close t,exch))) ohcl_map
 
 -- merge two Tuple pairs
 mergeBest :: ((Double,Text),(Double,Text)) -> ((Double,Text),(Double,Text)) -> ((Double,Text),(Double,Text))
@@ -44,7 +44,7 @@ parallelBestMap :: Int -> [(Text, Snapshot)] -> Map Text ((Double, Text), (Doubl
 parallelBestMap numCores batch =
     let n         = length batch
         -- ceil function, chunkSize determines # snapshots per chunk and for division with remainder resultant, you need to round up so snapshots are not discarded
-        chunkSize = (n + numCores - 1) `div` numCores 
+        chunkSize = max 1 $ (n + numCores - 1) `div` numCores 
         chunks    = chunksOf chunkSize batch -- distribute the snapshots to the chunks
         partials  = parMap rdeepseq processChunk chunks -- compute and retrieve the best maps of each chunk in parallel 
     in  Map.unionsWith mergeBest partials -- final merge of each chunks best map to get the singular best map of the batch
