@@ -1,36 +1,59 @@
-# CS421 Crypto Cross‑Exchange Arbitrage Simulator
+# CS421 Crypto Cross-Exchange Arbitrage Simulator
 
-This repository contains the code and docs for my CS 421 (Programming Languages & Compilers) honors project at UIUC. It has two major pieces:
+[![Haskell](https://img.shields.io/badge/Haskell-Stack-5e5086?logo=haskell&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](LICENSE)
 
-- **Dataset Builder (Python)** — fetches historical per‑minute OHLC data for a single simulation day and materializes exchange‑grouped snapshots.
-- **Arbitrage Simulator (Haskell/Stack)** — consumes those snapshots and, using concurrency/parallelism + STM, scans all exchanges minute‑by‑minute to surface cross‑exchange arbitrage opportunities.
+This repository contains the code and docs for my CS 421 (Programming Languages & Compilers) honors project at UIUC. The repository has two main components:
 
-> Public‑artifact friendly: large generated data (under `datasets/` and `outputs/`) and secrets are **.gitignored**.
+- **Dataset Builder (Python)** — fetches historical per-minute OHLC data for a single simulation day and materializes exchange-grouped snapshots.
+- **Arbitrage Simulator (Haskell/Stack)** — consumes those snapshots and, using concurrency/parallelism + STM, scans all exchanges minute-by-minute to surface cross-exchange arbitrage opportunities.
 
+> **Public-artifact friendly** — large generated data (`datasets/`, `outputs/`) and secrets are **.gitignored**.
+
+---
+
+## Table of Contents
+
+- [Repo layout](#repo-layout)  
+- [Prerequisites](#prerequisites)  
+- [Environment variables](#environment-variables)  
+- [Quick start](#quick-start)  
+  - [1) Create the dataset](#1-create-the-dataset-for-a-single-simulation-day)  
+  - [2) Build & run the Haskell simulator](#2-build--run-the-haskell-simulator)  
+- [Unit tests](#unit-tests)  
+- [Technical overview](#technical-overview)  
+- [Troubleshooting](#troubleshooting)  
+- [License](#license)
+
+---
 
 ## Repo layout
 
 ```
 ds_scripts/                # Python dataset pipeline scripts
-  create_dataset.py        # (moved here) build the simulation dataset
+  create_dataset.py        # builds the simulation dataset   (moved here)
 haskell_env/cross-exch-arbitrage-simulator/
                            # Haskell Stack project for the simulator
-metadata/                  # small docs about symbols/exchanges (no data)
-outputs/                   # (ignored) example reports produced by simulator
+datasets/                  # (ignored) output snapshots when creating dataset 
+outputs/                   # (ignored) logbook of per-min arbitrage opportunities
 ```
 
 ## Prerequisites
 
-- **Python 3.10+**
-  - `pip install -r ds_scripts/requirements.txt` (or install the few libs shown below)
+- **Python 3.10+**  
+  Install deps either via a venv + `pip` or your preferred tool.
 - **TwelveData API key** (free tier OK; 8 req/min, 800/day)
-- **Stack** (Haskell build tool): https://docs.haskellstack.org/
+- **Stack** (Haskell build tool): <https://docs.haskellstack.org/>
 
-### Environment variables
-Create a `.env` at repo root (not committed):
+## Environment variables
+
+Create a `.env` at the repo root (not committed):
+
+```dotenv
+TWELVEDATA_API_KEY=<your_key_here>
 ```
-TWELVEDATA_API_KEY=<your key>
-```
+
 The dataset builder reads this via `python-dotenv`.
 
 ---
@@ -39,23 +62,26 @@ The dataset builder reads this via `python-dotenv`.
 
 ## 1) Create the dataset (for a single simulation day)
 
-The simulator operates on one UTC day (00:00–23:59, per‑minute bars). From repo root:
+The simulator operates on one **UTC** day (00:00–23:59, per-minute bars). From repo root:
 
 ```bash
-# install deps (minimal set)
+# Install minimal Python deps
+python -m pip install --upgrade pip
 python -m pip install python-dotenv requests zstandard tqdm
 
-# build the dataset for a day (YYYY-MM-DD)
+# Build the dataset for a day (YYYY-MM-DD)
 python ds_scripts/create_dataset.py --day 2025-10-13
 ```
 
 **What this does**
-- fetches per‑minute OHLCV for a curated symbol list, across supported exchanges (subject to API availability);
-- writes **symbol‑grouped** files: `datasets/crypto_symbol_data/<DAY>/<SYMBOL>_<EXCH>.ndjson`
-- writes **exchange‑grouped** snapshots (compressed): `datasets/crypto_snapshot_data/<DAY>/<EXCH>.ndjson.zst`
+- Fetches per-minute OHLCV for a curated symbol list, across supported exchanges (subject to API availability).
+- Writes **symbol-grouped** files:  
+  `datasets/crypto_symbol_data/<DAY>/<SYMBOL>_<EXCH>.ndjson`
+- Writes **exchange-grouped** snapshots (compressed):  
+  `datasets/crypto_snapshot_data/<DAY>/<EXCH>.ndjson.zst`
 
-**Notes on rate limits**
-- Free tier is **8 calls/min** and **800/day**. The script batches requests and sleeps as needed; concurrency will still be bottlenecked by the ceiling, but overlapping I/O helps hide latency.
+**Rate-limit notes**
+- Free tier is **8 calls/min** and **800/day**. The script batches requests and sleeps as needed; concurrency is still bottlenecked by the ceiling but overlaps I/O to hide latency.
 
 ## 2) Build & run the Haskell simulator
 
@@ -64,19 +90,20 @@ cd haskell_env/cross-exch-arbitrage-simulator
 stack build
 ```
 
-Run the simulator for a specific day (reads exchange snapshots produced in step 1):
+Run the simulator for a specific day (reads the exchange snapshots produced in step 1):
 
 ```bash
-# use all cores; pass -N to enable multicore RTS
+# Use all cores; pass -N to enable multicore RTS
 stack run cross-exch-arbitrage-simulator -- --day 2025-10-13 +RTS -N -s
 ```
 
-- `--day` selects the dataset day.
-- `+RTS -N` lets the runtime use all capabilities (cores). You can also pass `+RTS -N4` to pin to 4 cores.
+- `--day` selects the dataset day.  
+- `+RTS -N` lets the runtime use all capabilities (cores). You can also pass `+RTS -N4` to pin to 4 cores.  
 - `-s` prints RTS stats at exit (useful for benchmarking).
 
 ### Example output (truncated)
-```
+
+```text
 "2025-10-13 00:00:00"
   found 11 opportunity(ies):
     ADA/TRY  buy $29.516 on Paribu    sell $29.681 on BTCTurk
@@ -92,15 +119,36 @@ stack run cross-exch-arbitrage-simulator -- --day 2025-10-13 +RTS -N -s
 
 ---
 
-## Repro tips
+## Unit tests
 
-- If `datasets/crypto_snapshot_data/<DAY>/` is missing, the simulator will exit early—run **Step 1**.
-- You can keep the folder structure in‑repo using `.gitkeep` files while keeping large data out of Git (already configured).
+The Haskell simulator includes a test suite. From the simulator directory:
 
-## Development
+```bash
+cd haskell_env/cross-exch-arbitrage-simulator
+stack test
+```
 
-- Python style: small, single‑file scripts under `ds_scripts/`. Feel free to move to a package later.
-- Haskell style: emphasizes **STM** for minute‑level coordination and **`async`/parallel** for per‑exchange work. See the technical doc for details.
+- This compiles the test target(s) and runs them under Stack’s test runner.
+
+---
+
+## Technical overview
+
+For a deeper dive into data formats, concurrency/parallelism, and STM design decisions, see:  
+**[TECHNICAL_OVERVIEW.md](TECHNICAL_OVERVIEW.md)**
+
+---
+
+## Troubleshooting
+
+- **Simulator can’t find data**  
+  Ensure `datasets/crypto_snapshot_data/<DAY>/` exists (run Step 1 again) and your `--day` matches the created day.
+
+- **Use fewer cores**  
+  Append `+RTS -N4` (or another number) to restrict runtime parallelism.
+
+---
 
 ## License
-MIT — see `LICENSE`.
+
+MIT — see [`LICENSE`](LICENSE).

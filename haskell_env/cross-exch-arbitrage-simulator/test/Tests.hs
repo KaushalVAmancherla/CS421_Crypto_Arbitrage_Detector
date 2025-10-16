@@ -29,7 +29,7 @@ firstTest = testGroup "Init Exchange Map"
             snapshot = Snapshot {
                 datetime = "2025-04-22T00:15:00Z",
                 exchange = "Binance",
-                ochl     = ohlc_map
+                ohlc     = ohlc_map
             }
 
             expected = Map.fromList [("coinA",((7.0,"Binance"),(7.0,"Binance"))),("coinB",((9.0,"Binance"),(9.0,"Binance")))]
@@ -63,7 +63,7 @@ thirdTest = testGroup "Batch Best Map"
                 snapshot = Snapshot {
                     datetime = "2025-04-22T00:15:00Z",
                     exchange = "Binance",
-                    ochl     = ohlc_map
+                    ohlc     = ohlc_map
                 }
 
                 tickC   = Tick { open  = 6.0, high = 10.2, low = 0.5, close = 10.0 }
@@ -73,7 +73,7 @@ thirdTest = testGroup "Batch Best Map"
                 snapshot_2 = Snapshot {
                     datetime = "2025-04-22T00:15:00Z",
                     exchange = "Kraken",
-                    ochl     = ohlc_map_2
+                    ohlc     = ohlc_map_2
                 }
 
                 batchChunk = [("Binance", snapshot), ("Kraken", snapshot_2)]

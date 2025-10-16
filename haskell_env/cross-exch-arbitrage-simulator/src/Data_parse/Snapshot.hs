@@ -16,7 +16,7 @@ data Snapshot = Snapshot
   {
     datetime :: Text,
     exchange :: Text,
-    ohcl :: Map Text Tick
+    ohlc :: Map Text Tick
   } deriving Show
 
 data Tick = Tick
