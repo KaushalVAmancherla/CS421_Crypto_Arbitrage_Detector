@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 From the historical ohcl data we sourced from the API, we filter it to only include data for 
 00:00:00 to 23:59:00 on the chosen date

@@ -25,8 +25,8 @@ through merging of each atomic chunk's best map
 -- This can be thought of as an init step, the merge will later take care of these duplicate/placeholder values
 getSnapshotBestMap :: (Text,Snapshot) -> Map Text ((Double,Text),(Double,Text))
 getSnapshotBestMap (exch, snap) = 
-    let ohcl_map = ohcl snap
-    in Map.map (\t -> ((close t,exch),(close t,exch))) ohcl_map
+    let ohlc_map = ohlc snap
+    in Map.map (\t -> ((close t,exch),(close t,exch))) ohlc_map
 
 -- merge two Tuple pairs
 mergeBest :: ((Double,Text),(Double,Text)) -> ((Double,Text),(Double,Text)) -> ((Double,Text),(Double,Text))
