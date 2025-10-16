@@ -33,6 +33,7 @@ This repository contains the code and docs for my CS 421 (Programming Languages 
 ```
 ds_scripts/                # Python dataset pipeline scripts
   create_dataset.py        # builds the simulation dataset   (moved here)
+  requirements.txt         # Python runtime deps for dataset builder
 haskell_env/cross-exch-arbitrage-simulator/
                            # Haskell Stack project for the simulator
 datasets/                  # (ignored) output snapshots when creating dataset 
@@ -42,13 +43,19 @@ outputs/                   # (ignored) logbook of per-min arbitrage opportunitie
 ## Prerequisites
 
 - **Python 3.10+**  
-  Install deps either via a venv + `pip` or your preferred tool.
+  Use a virtual environment (recommended) and install from `ds_scripts/requirements.txt`.
 - **TwelveData API key** (free tier OK; 8 req/min, 800/day)
 - **Stack** (Haskell build tool): <https://docs.haskellstack.org/>
 
 ## Environment variables
 
-Create a `.env` at the repo root (not committed):
+Create a `.env` at the repo root (not committed). You may start by copying `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` to include your key:
 
 ```dotenv
 TWELVEDATA_API_KEY=<your_key_here>
@@ -62,12 +69,19 @@ The dataset builder reads this via `python-dotenv`.
 
 ## 1) Create the dataset (for a single simulation day)
 
-The simulator operates on one **UTC** day (00:00–23:59, per-minute bars). From repo root:
+The simulator operates on one **UTC** day (00:00–23:59, per-minute bars). From the repo root:
 
 ```bash
-# Install minimal Python deps
+# (Recommended) create and activate a virtual environment
+python -m venv .venv
+# macOS/Linux:
+source .venv/bin/activate
+# Windows (PowerShell):
+# .\.venv\Scripts\Activate.ps1
+
+# Upgrade pip and install Python dependencies
 python -m pip install --upgrade pip
-python -m pip install python-dotenv requests zstandard tqdm
+python -m pip install -r ds_scripts/requirements.txt
 
 # Build the dataset for a day (YYYY-MM-DD)
 python ds_scripts/create_dataset.py --day 2025-10-13
@@ -129,6 +143,7 @@ stack test
 ```
 
 - This compiles the test target(s) and runs them under Stack’s test runner.
+- You can pass RTS options during tests as well, e.g. `stack test --test-arguments="+RTS -N -s"`.
 
 ---
 
@@ -143,6 +158,9 @@ For a deeper dive into data formats, concurrency/parallelism, and STM design dec
 
 - **Simulator can’t find data**  
   Ensure `datasets/crypto_snapshot_data/<DAY>/` exists (run Step 1 again) and your `--day` matches the created day.
+
+- **Rate-limited / partial data**  
+  TwelveData free tier will throttle; re-run the dataset step if some symbols/exchanges arrived late. The simulator tolerates missing pairs per minute.
 
 - **Use fewer cores**  
   Append `+RTS -N4` (or another number) to restrict runtime parallelism.
