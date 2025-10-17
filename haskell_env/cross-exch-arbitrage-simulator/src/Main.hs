@@ -49,7 +49,7 @@ main = do
 
   let numExs = length files
       -- Delay between simulated API calls (in microseconds)
-      delayMicro = 1000
+      delayMicro = 10000
       -- Convert microseconds to seconds for consumer timing
       delaySec = fromIntegral delayMicro / 1000000
       out_fp = "../../outputs/arbitrage.log"
