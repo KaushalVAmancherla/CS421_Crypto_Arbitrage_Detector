@@ -10,10 +10,10 @@ module Tests where
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import ProcessBatch.ProcessBatch
-import QueueConsumer.Consumer
-import Data_parse.Snapshot (Snapshot(..), Tick(..))
-import Portfolio.Portfolio (ValidArbitrage(..))
+import Pipeline.ProcessBatch
+import Pipeline.Consumer
+import Model.Snapshot (Snapshot(..), Tick(..))
+import Model.Opportunity (Opportunity(..))
 
 import qualified Data.Map.Strict         as Map
 
@@ -99,22 +99,22 @@ fourthTest = testGroup "Validate Best Map"
                         ("coinZ",((5.0,"Binance"),(5.0,"Kraken")))
                     ]
 
-                validArbitrage = ValidArbitrage 
+                validArbitrage = Opportunity 
                     {
-                        sym = "coinC",
-                        exBuy = "Kraken",
-                        pBuy = 4.0,
-                        exSell = "Binance",
-                        pSell = 12.0
+                        arSymbol = "coinC",
+                        arBuyEx = "Kraken",
+                        arBuyPx = 4.0,
+                        arSellEx = "Binance",
+                        arSellPx = 12.0
                     }
 
-                validArbitrage2 = ValidArbitrage 
+                validArbitrage2 = Opportunity 
                     {
-                        sym = "coinQ",
-                        exBuy = "Binance",
-                        pBuy = 5.0,
-                        exSell = "Coinbase",
-                        pSell = 15.0
+                        arSymbol = "coinQ",
+                        arBuyEx = "Binance",
+                        arBuyPx = 5.0,
+                        arSellEx = "Coinbase",
+                        arSellPx = 15.0
                     }
 
                 expected = [validArbitrage, validArbitrage2]

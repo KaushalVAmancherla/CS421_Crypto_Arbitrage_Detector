@@ -67,6 +67,10 @@ The dataset builder reads this via `python-dotenv`.
 The simulator operates on one **UTC** day (00:00–23:59, per-minute bars). From the repo root:
 
 ```bash
+'''
+Run from project root
+'''
+
 # (Recommended) create and activate a virtual environment
 python -m venv .venv
 # macOS/Linux:

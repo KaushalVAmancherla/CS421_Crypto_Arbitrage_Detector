@@ -283,7 +283,7 @@
 #endif /* MIN_TOOL_VERSION_runghc */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "cross-exch-arbitrage-simulator-0.1.0.0-D8PrU3x1InfFLZPq1fuGa7-cross-exch-arbitrage-simulator"
+#define CURRENT_COMPONENT_ID "cross-exch-arbitrage-simulator-0.1.0.0-IWV7uhgoIgLGzcriQYbJt4-cross-exch-arbitrage-simulator"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
