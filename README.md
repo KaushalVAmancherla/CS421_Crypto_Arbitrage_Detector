@@ -83,7 +83,7 @@ python -m pip install -r ds_scripts/requirements.txt
 # NOTE:
 # ds_scripts/build_dataset.py accepts --min-exchanges and --compression-level
 # as optional arguments. See the Dataset Builder section of
-# TECHNICAL_OVERVIEW.md for a detailed explanation of these parameters.
+# TECHNICAL_OVERVIEW.md for an explanation of these parameters.
 python ds_scripts/build_dataset.py --day 2025-10-13
 
 ```
