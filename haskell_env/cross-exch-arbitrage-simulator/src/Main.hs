@@ -11,10 +11,10 @@ import           Data.Time.Format            (formatTime, defaultTimeLocale)
 import           System.Directory            (createDirectoryIfMissing)
 import           System.FilePath             (takeDirectory, (</>))
 
-import           Directory_scan.Get_snapshots (getSnapshotFiles)
-import           Coordinator.Coordinator     (newCoordinator)
-import           Data_parse.Data_parser      (streamFileHaskell)
-import           QueueConsumer.Consumer      (consumer)
+import           Data.SnapshotFiles (getSnapshotFiles)
+import           Pipeline.BatchBuffer     (newBuffer)
+import           Data.Producer      (streamSnapshot)
+import           Pipeline.Consumer      (runConsumer)
 
 -- Required flag: --UTC day (YYYY-MM-DD)
 getDayRequired :: IO String
@@ -34,18 +34,19 @@ main = do
   files <- getSnapshotFiles dayDir
 
   let numExs  = length files
-      delayMicro  = 100           -- microseconds to simulate delta between API calls
+      delayMicro  = 1000           -- microseconds to simulate delta between API calls
       delaySec    = fromIntegral delayMicro / 1000000  -- microseconds to seconds
       out_fp = "../../outputs/arbitrage.log"
 
-  coord <- newCoordinator numExs
+  -- create buffer
+  buffer <- newBuffer numExs
 
-  -- spawn n producer threads 
+  -- spawn n producer threads that stream snapshot per-minute data into the shared buffer
   forM_ files $ \fp ->
-    void . async $ streamFileHaskell coord delayMicro fp
+    void . async $ streamSnapshot buffer delayMicro fp
 
   -- create output directory if it doesn't exist
   createDirectoryIfMissing True (takeDirectory out_fp)
 
-  -- run consumer thread
-  consumer coord delaySec out_fp
+  -- start consumer
+  runConsumer buffer delaySec out_fp
