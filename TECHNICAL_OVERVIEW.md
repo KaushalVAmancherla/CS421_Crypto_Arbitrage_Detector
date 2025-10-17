@@ -154,10 +154,12 @@ BATCH: "2025-10-13 00:11:00" ARRIVAL TIME: 2025-10-16 22:53:23.427658 UTC
 [END WARN ] target=2025-10-16 22:53:23.427758 UTC actual=2025-10-16 22:53:23.428174 UTC delay=0.000416s work_time=0.000516s
 ```
 
-target → Target time batch should finish
-actual → Actual finish time
-rem/delay → Early or late by this amount
-work_time → Processing time for the batch
+- target → Target time batch should finish
+- actual → Actual finish time
+- rem/delay → Early or late by this amount
+- work_time → Processing time for the batch
+
+Please note, we are simulating historical data against real-time, hence the batch time and arrival time will obviously differ. 
 
 ![Consumer Workflow](/images/consumer-workflow.jpg)
 
