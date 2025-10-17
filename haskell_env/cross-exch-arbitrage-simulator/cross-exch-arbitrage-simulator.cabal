@@ -59,6 +59,7 @@ executable cross-exch-arbitrage-simulator
     -Wredundant-constraints
     -threaded 
     -rtsopts
+  default-extensions: ImportQualifiedPost, OverloadedStrings
 
 test-suite test
   type: exitcode-stdio-1.0

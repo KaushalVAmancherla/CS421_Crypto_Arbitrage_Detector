@@ -32,7 +32,7 @@ This repository contains the code and docs for my CS 421 (Programming Languages 
 
 ```
 ds_scripts/                # Python dataset pipeline scripts
-  create_dataset.py        # builds the simulation dataset   (moved here)
+  build_dataset.py         # builds the simulation dataset   (moved here)
   requirements.txt         # Python runtime deps for dataset builder
 haskell_env/cross-exch-arbitrage-simulator/
                            # Haskell Stack project for the simulator
@@ -84,7 +84,7 @@ python -m pip install -r ds_scripts/requirements.txt
 # ds_scripts/create_dataset.py accepts --min-exchanges and --compression-level
 # as optional arguments. See the Dataset Builder section of
 # TECHNICAL_OVERVIEW.md for a detailed explanation of these parameters.
-python ds_scripts/create_dataset.py --day 2025-10-13
+python ds_scripts/build_dataset.py --day 2025-10-13
 
 ```
 

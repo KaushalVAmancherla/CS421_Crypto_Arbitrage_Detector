@@ -1,66 +1,117 @@
+{-|
+Module      : Pipeline.BatchBuffer
+Description : Thread-safe buffer for batching cryptocurrency market data
+Copyright   : (c) Kaushala Amancherla, 2025
+License     : MIT
+
+This module implements a concurrent buffer system for aggregating
+real-time cryptocurrency market data from multiple exchanges. It employs Software
+Transactional Memory (STM) to ensure thread safety and data consistency.
+
+Key Features:
+* Lock-free concurrent data structure using STM
+* Priority-based batch processing using a min-heap
+* Timestamp-based synchronization of exchange data
+* Automatic batch completion detection
+* Memory-efficient accumulator pattern
+-}
+
 module Pipeline.BatchBuffer where
 
-import           Control.Concurrent.STM
-import           Control.Monad                  (when)
+-- Concurrency imports
+import Control.Concurrent.STM 
+  ( STM
+  , TVar
+  , newTVarIO
+  , readTVar
+  , writeTVar
+  , modifyTVar'
+  )
+import Control.Monad (when)
 
-import           Data.Map.Strict                (Map)
-import qualified Data.Map.Strict                as Map
+-- Data structure imports
+import Data.Heap (MinPrioHeap)
+import Data.Map.Strict (Map)
+import Data.Text (Text)
 
-import           Data.Heap                (MinPrioHeap)
-import qualified Data.Heap                as H
+-- Qualified imports
+import Data.Heap qualified as H
+import Data.Map.Strict qualified as Map
+import Data.Text qualified as T
 
-import           Data.Text                      (Text)
-import qualified Data.Text                      as T
-
-import           Model.Snapshot            (Snapshot (..))   -- fields -> datetime, exchange
+-- Project imports
+import Model.Snapshot (Snapshot(..))  -- Provides datetime, exchange fields
 
 -- | Accumulator buckets: timestamp-text → (exchange → snapshot)
+-- | A two-level map structure for accumulating exchange snapshots:
+-- * Outer Map: Timestamp -> Inner Map
+-- * Inner Map: Exchange Name -> Exchange Snapshot
+--
+-- This structure allows efficient lookup and aggregation of snapshots
+-- from multiple exchanges at specific timestamps.
 type Buckets = Map Text (Map Text Snapshot)
 
 -- | Handle holding *both* STM variables plus the exchange count
+-- | Thread-safe buffer for collecting and synchronizing exchange snapshots.
+-- Uses STM for concurrent access and a priority heap for ordered processing.
 data BatchBuffer = BatchBuffer
-  { totalExs :: !Int
-  , accumVar :: TVar Buckets --hashMap of {timestamp : {exchange:snapshot}}
-  , heapVar :: TVar (MinPrioHeap Text [(Text, Snapshot)]) --our heap stores datetime as our priority with the list of (exchange_name, Snapshot) pairs as the payload
-  , producersLeft :: TVar Int --how many producer threads are still unfinished
+  { -- | Total number of exchanges being monitored
+    totalExs :: !Int,
+    -- | Accumulator for incomplete batches, using STM for thread safety
+    accumVar :: TVar Buckets,
+    -- | Priority queue of completed batches, ordered by timestamp
+    -- Each entry is (timestamp, [(exchange, snapshot)])
+    heapVar :: TVar (MinPrioHeap Text [(Text, Snapshot)]),
+    -- | Counter for active producer threads
+    producersLeft :: TVar Int
   }
 
-newBuffer :: Int -> IO BatchBuffer
+-- | Creates a new BatchBuffer for a specified number of exchanges.
+-- Initializes all STM variables with empty states.
+newBuffer :: Int  -- ^ Number of exchanges to monitor
+         -> IO BatchBuffer
 newBuffer n = do
-  acc <- newTVarIO Map.empty
-  hp  <- newTVarIO H.empty
-  productersLeft <- newTVarIO n
-  pure $ BatchBuffer n acc hp productersLeft
+  acc <- newTVarIO Map.empty            -- Empty accumulator
+  hp <- newTVarIO H.empty               -- Empty priority queue
+  producersLeft <- newTVarIO n          -- All producers active
+  pure $ BatchBuffer n acc hp producersLeft
 
-insertSnapshot :: BatchBuffer -> Snapshot -> STM ()
-insertSnapshot (BatchBuffer totalExs accumVar heapVar producersLeft) snapshot = do
-  -- read the entire bucket map
+-- | Atomically inserts a snapshot into the buffer and manages batch completion.
+-- When all exchanges for a timestamp are received, the batch is automatically
+-- moved to the priority queue for processing.
+insertSnapshot :: BatchBuffer  -- ^ Target buffer
+              -> Snapshot     -- ^ New snapshot to insert
+              -> STM ()
+insertSnapshot (BatchBuffer totalExs accumVar heapVar _) snapshot = do
   buckets <- readTVar accumVar
 
-  let timestamp               = datetime snapshot        -- e.g. "2025-04-22T12:03:00"
-      snapshotExchange        = exchange snapshot        -- e.g. "Binance"
+  let -- Extract key fields from snapshot
+      timestamp = datetime snapshot        -- e.g. "2025-04-22T12:03:00"
+      snapshotExchange = exchange snapshot -- e.g. "Binance"
 
-      -- find the bucket with the same timestamp as the input snapshot
-      -- if no such map exists for the given timestamp, return an empty Map
-      timestamp_bucket        = Map.findWithDefault Map.empty timestamp buckets
+      -- Find or create bucket for this timestamp
+      timestamp_bucket = Map.findWithDefault Map.empty timestamp buckets
 
-      -- our new bucket exchange_bucket is {snapshotExchange: snapshot} added to timestamp_bucket
-      exchange_bucket         = Map.insert snapshotExchange snapshot timestamp_bucket
+      -- Add new snapshot to the exchange bucket
+      exchange_bucket = Map.insert snapshotExchange snapshot timestamp_bucket
 
-      -- write exchange_bucket to buckets so the update will be captured
-      buckets_updated         = Map.insert timestamp exchange_bucket buckets
+      -- Update main buckets map
+      buckets_updated = Map.insert timestamp exchange_bucket buckets
 
-  -- update accumulator first
+  -- Update accumulator with new snapshot
   writeTVar accumVar buckets_updated
 
-  -- if bucket complete, remove & push to heap
-  -- bucket complete: exchange_bucket now has all n snapshots from n exchanges in it
+  -- Check if batch is complete (all exchanges received)
   when (Map.size exchange_bucket == totalExs) $ do
-    -- remove from our accumulator
+    -- Remove completed batch from accumulator
     writeTVar accumVar (Map.delete timestamp buckets_updated)
 
-    --add (timestamp, [(exchange,snapshot)]) to the heap
+    -- Move completed batch to priority queue
     modifyTVar' heapVar (H.insert (timestamp, Map.toList exchange_bucket))
 
-decrementProducers :: BatchBuffer -> STM ()
-decrementProducers buffer = modifyTVar' (producersLeft buffer) (\x -> x - 1)
+-- | Decrements the count of active producer threads.
+-- Used to track when all producers have finished their work.
+decrementProducers :: BatchBuffer  -- ^ Target buffer
+                  -> STM ()
+decrementProducers buffer = 
+  modifyTVar' (producersLeft buffer) (\x -> x - 1)

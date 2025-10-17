@@ -1,30 +1,63 @@
+{-|
+Module      : Data.Producer
+Description : Streaming helpers that feed exchange snapshots into the simulator
+Copyright   : (c) Kaushala Amancherla, 2025
+License     : MIT
+
+This module contains the producer-side streaming logic used by the simulator.
+Each producer reads an NDJSON/ndjson.zst file for a single exchange, decodes
+per-minute snapshots, and inserts them into the shared `BatchBuffer`.
+
+For reproducibility of timing-sensitive behavior, the producer sleeps a fixed
+microsecond interval between snapshot insertions to emulate API update delays.
+-}
+
 module Data.Producer where
 
-import           Conduit                               (runConduitRes, (.|), sourceFile)
-import qualified Data.Conduit.Combinators            as CC
-import           Data.Conduit.Zstd                   (decompress)
-import           Control.Concurrent                  (threadDelay)
-import           Control.Concurrent.STM              (atomically, modifyTVar')
-import           Data.Aeson                          (decode)
-import qualified Data.ByteString.Lazy                as BL
-import           Control.Monad                       (when)
-import           Pipeline.BatchBuffer                (BatchBuffer, insertSnapshot, decrementProducers)
-import           Model.Snapshot                 (Snapshot)
-import           Control.Monad.IO.Class   (liftIO)
+-- Conduit streaming primitives
+import Conduit (runConduitRes, sourceFile, (.|))
+import Data.Conduit.Combinators qualified as CC
+import Data.Conduit.Zstd (decompress)
 
--- Stream file x's snapshots into the coordinator
--- pausing `delayUS` microseconds between each snapshot injestion to simulate delta between API updating its data
-streamSnapshot :: BatchBuffer -> Int -> FilePath -> IO ()
+-- Concurrency
+import Control.Concurrent (threadDelay)
+import Control.Monad.IO.Class (liftIO)
+
+-- STM
+import Control.Concurrent.STM (atomically)
+
+-- JSON and bytestrings
+import Data.Aeson (decode)
+import Data.ByteString.Lazy qualified as BL
+
+-- Project imports
+import Model.Snapshot (Snapshot)
+import Pipeline.BatchBuffer (BatchBuffer, decrementProducers, insertSnapshot)
+
+-- | Stream snapshots from a compressed NDJSON file into the shared buffer.
+-- The function decompresses the file, reads it line-by-line, decodes each
+-- JSON line into a 'Snapshot' and inserts it atomically into the buffer.
+-- A fixed delay (in microseconds) is introduced between insertions to simulate
+-- API update intervals for reproducible behavior.
+streamSnapshot :: BatchBuffer  -- ^ Shared buffer to receive snapshots
+               -> Int          -- ^ Delay between snapshots in microseconds
+               -> FilePath     -- ^ Path to compressed NDJSON (.ndjson.zst)
+               -> IO ()
 streamSnapshot buffer delayUS fp = do
   runConduitRes $
     sourceFile fp
-    .| decompress -- decompress zstd
-    .| CC.linesUnboundedAscii
-    .| CC.mapM_ (\strictBS -> --split byte stream into lines of strict ByteString
-         case decode (BL.fromStrict strictBS) of --convert strict ByteString to lazy
-           Nothing       -> pure () --skip malformed lines
-           Just snapshot -> do -- if line is successfuly parsed into a Snapshot object, hand Snapshot into our coordinator
-             liftIO $ atomically (insertSnapshot buffer snapshot)
-             liftIO $ threadDelay delayUS --simulate delta between API-side updates
-       )
-  atomically $ decrementProducers buffer --once all lines are processed in the snapshot (total 1440), update coordinator to indicate this producer thread is finished 
+      .| decompress
+      .| CC.linesUnboundedAscii
+      .| CC.mapM_ handleLine
+
+  -- Mark this producer as finished once file is fully processed
+  atomically $ decrementProducers buffer
+
+  where
+    handleLine strictBS =
+      case decode (BL.fromStrict strictBS) of
+        Nothing -> pure () -- Skip malformed lines silently
+        Just snapshot -> do
+          -- Insert snapshot into buffer and simulate API timing
+          liftIO $ atomically (insertSnapshot buffer snapshot)
+          liftIO $ threadDelay delayUS
