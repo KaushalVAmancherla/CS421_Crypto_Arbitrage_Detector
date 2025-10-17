@@ -1,226 +1,170 @@
+# CS421 Crypto Cross-Exchange Arbitrage Simulator
 
-# CS421 Crypto Cross-Exchange Arbitrage Simulator — Technical Overview
+[![Haskell](https://img.shields.io/badge/Haskell-Stack-5e5086?logo=haskell&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](LICENSE)
 
->This document provides a detailed technical overview of the two main pipelines in the project: **Dataset Builder** and **Arbitrage Detector**. All diagrams and architectural features are preserved for clarity.
+This repository contains the code and docs for my CS 421 (Programming Languages & Compilers) honors project at UIUC. The repository has two main components:
+
+- **Dataset Builder (Python)** — fetches historical per-minute OHLC data for a single simulation day and materializes exchange-grouped snapshots.
+- **Arbitrage Simulator (Haskell/Stack)** — consumes those snapshots and, using concurrency/parallelism + STM, scans all exchanges minute-by-minute to surface cross-exchange arbitrage opportunities.
+
+> **Public-artifact friendly** — large generated data (`datasets/`, `outputs/`) and secrets are **.gitignored**.
 
 ---
 
 ## Table of Contents
-1. [Dataset Builder Pipeline](#dataset-builder-pipeline)
-2. [Arbitrage Detector Pipeline](#arbitrage-detector-pipeline)
-3. [Key Architectural Features & Design Choices](#key-architectural-features--design-choices)
+
+- [Repo layout](#repo-layout)  
+- [Prerequisites](#prerequisites)  
+- [Environment variables](#environment-variables)  
+- [Quick start](#quick-start)  
+  - [1) Create the dataset](#1-create-the-dataset-for-a-single-simulation-day)  
+  - [2) Build & run the Haskell simulator](#2-build--run-the-haskell-simulator)  
+- [Unit tests](#unit-tests)  
+- [Technical overview](#technical-overview)  
+- [Troubleshooting](#troubleshooting)  
+- [License](#license)
 
 ---
 
-## 1. Dataset Builder Pipeline
-
-The Dataset Builder pipeline generates per-minute OHLC (Open, High, Low, Close) data for a curated set of cryptocurrencies, grouped by exchange, for a single UTC day. Data is sourced from the [Twelve Data API](https://twelvedata.com/cryptocurrencies).
-
-### Pipeline Steps
-
-**Step 1: Build Symbol-to-Exchange Mapping**
-
-*Script:* `ds_scripts/symbol_to_exchange.py`
-
-Creates `datasets/symbol_to_exchange.json`, a dictionary mapping each symbol (e.g., `XLM/USD`) to the exchanges it is traded on:
-
-```json
-{
-  "XLM/USD": ["Binance", "Coinbase Pro", "Huobi", "OKEx"],
-  ...
-}
-```
-
-Only symbols listed on at least `min_exchanges` exchanges are included (default: 2). This ensures arbitrage is possible.
-
-**Step 2: Download Per-Symbol, Per-Exchange OHLC Data**
-
-*Script:* `ds_scripts/get_historical_price.py`
-
-For each (symbol, exchange) tuple, downloads 1-minute OHLC data for the specified day. Output files:
+## Repo layout
 
 ```
-datasets/crypto_timeseries_data/<DAY>/<SYM>/<SYM>_<EXCH>.ndjson
+ds_scripts/                # Python dataset pipeline scripts
+  build_dataset.py         # builds the simulation dataset   (moved here)
+  requirements.txt         # Python runtime deps for dataset builder
+haskell_env/cross-exch-arbitrage-simulator/
+                           # Haskell Stack project for the simulator
+datasets/                  # (ignored) output snapshots when creating dataset 
+outputs/                   # (ignored) logbook of per-min arbitrage opportunities
 ```
 
-Each file contains 1440 lines (one per minute), e.g.:
+## Prerequisites
 
-```json
-{"datetime": "2025-10-13 00:00:00", "symbol": "ADA/TRY", "exchange": "BTCTurk", "open": "29.68100", "high": "29.68100", "low": "29.68100", "close": "29.68100"}
+- **Python 3.10+**  
+  Install from `ds_scripts/requirements.txt`, (use of virtual environment is recommended)
+- **TwelveData API key** (free tier OK; 8 req/min, 800/day)
+- **Stack** (Haskell build tool): <a href="https://docs.haskellstack.org/" target="_blank" rel="noopener noreferrer">docs.haskellstack.org</a>
+
+
+## Environment variables
+
+Create a `.env` at the repo root (not committed) to include your key:
+
+```dotenv
+TWELVEDATA_API_KEY=<your_key_here>
 ```
 
-Directories with fewer than 2 files are deleted to enforce the minimum exchange rule.
-
-**Step 3: Assemble Per-Exchange Compressed Snapshots**
-
-*Script:* `ds_scripts/create_snapshots.py`
-
-Aggregates all per-symbol NDJSON files for each exchange into a single compressed snapshot:
-
-```
-datasets/crypto_snapshot_data/<DAY>/<EXCH>.ndjson.zst
-```
-
-Each line is a JSON object for a minute, containing OHLC data for all symbols traded on that exchange:
-
-```json
-{
-  "datetime": "2025-10-13 00:14:00",
-  "exchange": "Binance",
-  "ADA/USD": {"open": "0.6988", "high": "0.7", "low": "0.6987", "close": "0.6997"},
-  "XLM/USD": {...},
-  ...
-}
-```
-
-**Orchestration**
-
-*Script:* `ds_scripts/build_dataset.py`
-
-Runs all three steps above, validating arguments and environment variables. Key flags:
-
-- `--day` (required): UTC day (YYYY-MM-DD)
-- `--min-exchanges` (default: 2): Minimum exchanges for a symbol
-- `--compression-level` (default: 3): zstd compression level (1-22)
+The dataset builder reads this via `python-dotenv`.
 
 ---
 
-## 2. Arbitrage Detector Pipeline
+# Quick start
 
-The Arbitrage Detector pipeline simulates real-time receipt of per-minute OHLC data from multiple exchanges and detects cross-exchange arbitrage opportunities.
+## 1) Create the dataset (for a single simulation day)
 
-### Architecture Overview
+The simulator operates on one **UTC** day (00:00–23:59, per-minute bars). From the repo root:
 
-**Producer Threads**
+```bash
+# (Recommended) create and activate a virtual environment
+python -m venv .venv
+# macOS/Linux:
+source .venv/bin/activate
+# Windows (PowerShell):
+# .\.venv\Scripts\Activate.ps1
 
-- Each producer reads a compressed NDJSON snapshot file for one exchange (`datasets/crypto_snapshot_data/<DAY>/<EXCH>.ndjson.zst`).
-- Streams and decompresses lines, parses each into a `Snapshot` object, and inserts it atomically into a shared `BatchBuffer`.
-- A fixed delay (default: 0.01s) is used between lines to simulate real-time data arrival.
+# Upgrade pip and install Python dependencies
+python -m pip install --upgrade pip
+python -m pip install -r ds_scripts/requirements.txt
 
-**Snapshot Object**
+# Build the dataset for a day (YYYY-MM-DD)
 
-*File:* `src/Model/Snapshot.hs`
+# NOTE:
+# ds_scripts/build_dataset.py accepts --min-exchanges and --compression-level
+# as optional arguments. See the Dataset Builder section of
+# TECHNICAL_OVERVIEW.md for an explanation of these parameters.
+python ds_scripts/build_dataset.py --day 2025-10-13
 
-```haskell
-data Snapshot = Snapshot
-  {
-    datetime :: Text,
-    exchange :: Text,
-    ohlc :: Map Text Tick
-  } deriving Show
-
-data Tick = Tick
-  { open :: Double, high :: Double, low :: Double, close :: Double }
 ```
 
-**BatchBuffer (Central Synchronization)**
+**What this does**
+- Fetches per-minute OHLCV for a curated symbol list, across supported exchanges (subject to API availability).
+- Writes **symbol-grouped** files:  
+  `datasets/crypto_symbol_data/<DAY>/<SYMBOL>_<EXCH>.ndjson`
+- Writes **exchange-grouped** snapshots (compressed):  
+  `datasets/crypto_snapshot_data/<DAY>/<EXCH>.ndjson.zst`
 
-*File:* `src/Pipeline/BatchBuffer.hs`
+**Rate-limit notes**
+- Free tier is **8 calls/min** and **800/day**. The script is designed for this plan, so
+data fetching may be slow.
 
-Thread-safe buffer using STM (Software Transactional Memory) for atomic, lock-free access. Key fields:
+## 2) Build & run the Haskell simulator
 
-- `totalExs`: Number of exchanges
-- `accumVar`: STM TVar holding incomplete batches (timestamp → exchange → snapshot)
-- `heapVar`: STM TVar min-heap of completed batches (timestamp, [(exchange, snapshot)])
-- `producersLeft`: STM TVar tracking active producers
+Build the project
 
-When all exchanges for a timestamp are received, the batch is moved to the heap for processing.
+```bash
+cd haskell_env/cross-exch-arbitrage-simulator
+stack build
+```
 
-**Producer <-> BatchBuffer Workflow**
+Run the simulator for a specific day (reads the exchange snapshots produced in step 1):
 
-Producers stream data line-by-line, adding snapshots to the buffer. When a batch for a timestamp is complete (all exchanges present), it is pushed to the heap. The min-heap ensures batches are processed in chronological order.
+```bash
+stack run cross-exch-arbitrage-simulator -- --day 2025-10-13 +RTS -N -s
+```
 
-![Producer<->Buffer Workflow](/images/producer-buffer-workflow.jpg)
+- `--day` selects the dataset day.  
+- `+RTS -N` lets the runtime use all capabilities (cores). You could also pass `+RTS -N4` to pin to 4 cores, for example.
+- `-s` prints RTS stats at exit (useful for benchmarking).
 
-**Why a Min-Heap?**
-
-The min-heap guarantees that batches are processed strictly in timestamp order, preventing out-of-order arbitrage detection and ensuring reproducibility.
-
-**Consumer Thread**
-
-*File:* `src/Pipeline/Consumer.hs`
-
-- Atomically pops batches from the heap.
-- Processes each batch using parallel map-reduce (see below).
-- Validates and logs arbitrage opportunities to `outputs/arbitrage.log`.
-- Monitors timing to report if processing is on schedule, early, or delayed.
-
-Sample console output:
+### Example output (truncated)
 
 ```text
-BATCH: "2025-10-13 00:10:00" ARRIVAL TIME: 2025-10-16 22:53:23.426487 UTC
-[END EARLY] target=2025-10-16 22:53:23.426587 UTC actual=2025-10-16 22:53:23.426578 UTC rem=0.000009s work_time=0.000091s
-BATCH: "2025-10-13 00:11:00" ARRIVAL TIME: 2025-10-16 22:53:23.427658 UTC
-[END WARN ] target=2025-10-16 22:53:23.427758 UTC actual=2025-10-16 22:53:23.428174 UTC delay=0.000416s work_time=0.000516s
+"2025-10-13 00:00:00"
+  found 11 opportunity(ies):
+    ADA/TRY  buy $29.516 on Paribu    sell $29.681 on BTCTurk
+    BTC/EUR  buy $99126.4 on Kraken   sell $99236.23 on CoinbasePro
+    ETH/EUR  buy $3572.64 on Kraken   sell $3573.97 on Binance
+    ...
+"2025-10-13 00:01:00"
+  found 10 opportunity(ies):
+    ADA/USD  buy $0.697192 on Huobi   sell $0.70021802 on HitBTC
+    XRP/USD  buy $2.5197 on Bitrue    sell $2.52001 on Huobi
+    ...
 ```
 
-- target → Target time batch should finish
-- actual → Actual finish time
-- rem/delay → Early or late by this amount
-- work_time → Processing time for the batch
-
-Please note, we are simulating historical data against real-time, hence the batch time and arrival time will obviously differ. 
-
-![Consumer Workflow](/images/consumer-workflow.jpg)
-
-**Parallel Batch Processing**
-
-The parallel processing of each batch (via Haskell Parallel Strategies) follows a map-reduce paradigm:
-
-1. **Chunking:** Input list of (exchange, snapshot) pairs is chunked by number of CPU cores.
-2. **Map:** Each chunk finds local best buy/sell prices for each symbol.
-3. **Reduce:** Merge chunk results to find global best buy/sell prices.
-4. **Validation:** Only opportunities where sell price > buy price are logged.
-
-![Batch processing Workflow](/images/batch_parallel_processing.jpg)
-
-**Opportunity Object**
-
-*File:* `src/Model/Opportunity.hs`
-
-```haskell
-data Opportunity = Opportunity
-  { arSymbol :: Text
-  , arBuyEx  :: Text
-  , arBuyPx  :: Double
-  , arSellEx :: Text
-  , arSellPx :: Double
-  }
-```
-
-**End-to-End Arbitrage Detection Flow**
-
-![Batch processing Workflow](/images/e2e_arbitrage_detection_flow.jpg)
+Results are saved at `outputs/arbitrage.log`
 
 ---
 
-## 3. Key Architectural Features & Design Choices
+## Unit tests
 
-### STM & Atomicity
+The Haskell simulator includes a comprehensive unit test suite for arbitrage detection logic. Run it from the simulator directory:
 
-All shared state (batch buffer, heap, producer count) is managed using STM (Software Transactional Memory) for atomic, lock-free concurrency. This ensures thread safety and reproducibility, even under parallel execution.
+```bash
+cd haskell_env/cross-exch-arbitrage-simulator
+stack test
+```
 
-### Data Parallelism
-
-- **Outer parallelism:** Multiple producer threads stream data concurrently.
-- **Inner parallelism:** Batch processing uses Haskell's parallel strategies to analyze data across CPU cores.
-
-### Map-Reduce Paradigm
-
-Batch processing is designed as a map-reduce workflow for scalability. Each chunk is processed in parallel, and results are merged to find global arbitrage opportunities.
-
-### Design Rationale
-
-- **Min-heap for batch ordering:** Guarantees strict chronological processing, essential for time-sensitive arbitrage detection.
-- **STM for concurrency:** Chosen for its composability and safety in multi-threaded environments.
-- **Parallel batch processing:** Demonstrates scalable design for large datasets, even if overhead outweighs speedup for small batch sizes.
-
-### Summary of Key Pipeline Architectural Features
-
-- **Data Parallelism:** Batch processing map-reduce for scalable arbitrage detection.
-- **STM:** Atomic transactions and shared memory variables for thread-safe, concurrent access.
-- **Concurrency:** Producer-consumer architecture with lock-free synchronization.
-- **Outer Parallelism:** Multiple producer threads stream and synchronize data in real time.
-- **Inner Parallelism:** Parallel batch processing leverages all available CPU cores.
+The tests validate correctness of the core batch arbitrage logic, including best price map construction, merging, and opportunity validation.
 
 ---
+
+## Technical overview
+
+For a deeper dive into data formats, concurrency/parallelism, and STM design decisions, see:  
+**[TECHNICAL_OVERVIEW.md](TECHNICAL_OVERVIEW.md)**
+
+---
+
+## Troubleshooting
+
+- **Simulator can’t find data**  
+  Ensure `datasets/crypto_snapshot_data/<DAY>/` exists (run Step 1 again) and your `--day` matches the created day.
+
+---
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
