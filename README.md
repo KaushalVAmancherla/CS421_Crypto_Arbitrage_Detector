@@ -81,7 +81,7 @@ python -m pip install -r ds_scripts/requirements.txt
 # Build the dataset for a day (YYYY-MM-DD)
 
 # NOTE:
-# ds_scripts/create_dataset.py accepts --min-exchanges and --compression-level
+# ds_scripts/build_dataset.py accepts --min-exchanges and --compression-level
 # as optional arguments. See the Dataset Builder section of
 # TECHNICAL_OVERVIEW.md for a detailed explanation of these parameters.
 python ds_scripts/build_dataset.py --day 2025-10-13
