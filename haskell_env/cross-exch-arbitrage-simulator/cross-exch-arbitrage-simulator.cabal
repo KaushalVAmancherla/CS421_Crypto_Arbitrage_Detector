@@ -84,3 +84,4 @@ test-suite test
     , text-time
   default-language: Haskell2010
   ghc-options: -Wall
+  default-extensions: ImportQualifiedPost, OverloadedStrings

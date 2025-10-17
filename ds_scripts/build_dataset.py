@@ -114,9 +114,9 @@ def main():
     validate_compression_level(args.compression_level)
 
     # Script paths
-    p_sym = root / "ds_scripts" / "symbol_to_exchange.py"
-    p_hist = root / "ds_scripts" / "get_historical_price.py"
-    p_proc = root / "ds_scripts" / "create_snapshots.py"
+    p_sym = root / "symbol_to_exchange.py"
+    p_hist = root / "get_historical_price.py"
+    p_proc = root / "create_snapshots.py"
 
     # Sanity check: all three scripts must exist
     for p in [p_sym, p_hist, p_proc]:
